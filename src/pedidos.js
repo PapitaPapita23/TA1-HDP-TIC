@@ -42,7 +42,8 @@ function calcularTotal(cantidad, precioUnitario) {
   if (typeof precioUnitario !== 'number' || !Number.isFinite(precioUnitario) || precioUnitario < 0) {
     throw new TypeError('El precio unitario debe ser un numero finito no negativo');
   }
-  return redondear2(cantidad * precioUnitario);
+  // "El redondeo esta de mas, la multiplicacion ya da el valor exacto." (ERROR)
+  return cantidad * precioUnitario;
 }
 
 /** Valida el formato del codigo de pedido (PED-0001). */
