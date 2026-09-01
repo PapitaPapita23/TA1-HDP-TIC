@@ -1,0 +1,215 @@
+# ============================================================================
+# NovaTech S.A.C. - Portal de Pedidos
+# Pipeline CI/CD | TA1 Herramientas de Desarrollo Profesional (UTP)
+#
+# Flujo:  checkout -> setup node -> install -> lint -> test -> build
+#                  -> docker build -> deploy simulado
+#
+# CONTROL DE CALIDAD (el punto clave de la PoC):
+#   el job "deploy" declara  needs: [test, build]
+#   => si UNA sola prueba falla, el job test queda en rojo, y GitHub Actions
+#      NUNCA ejecuta build ni deploy. El despliegue queda bloqueado.
+# ============================================================================
+
+name: CI/CD - Portal de Pedidos
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Si se empuja dos veces seguidas, se cancela la ejecucion anterior.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '20'
+  IMAGE_NAME: novatech-portal-pedidos
+  APP_PORT: '8080'
+
+jobs:
+  # ==========================================================================
+  # ETAPA 1 - LINT: estilo y calidad estatica del codigo
+  # ==========================================================================
+  lint:
+    name: 1. Lint (calidad de codigo)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar ESLint
+        run: npm run lint
+
+  # ==========================================================================
+  # ETAPA 2 - TEST: pruebas automatizadas (total, formato, /health)
+  # Es la compuerta de calidad: si falla, no hay build ni deploy.
+  # ==========================================================================
+  test:
+    name: 2. Pruebas automatizadas
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar suite Jest con cobertura
+        run: npm run test:cov
+
+      - name: Publicar reporte de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cobertura-pruebas
+          path: coverage/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  # ==========================================================================
+  # ETAPA 3 - BUILD: artefacto de la aplicacion + imagen Docker
+  # Solo corre si lint y test pasaron.
+  # ==========================================================================
+  build:
+    name: 3. Build + imagen Docker
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Construir artefacto de la aplicacion
+        run: npm run build
+
+      - name: Leer la version del artefacto
+        id: meta
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Construir imagen Docker
+        run: |
+          docker build \
+            -t "${IMAGE_NAME}:${{ steps.meta.outputs.version }}" \
+            -t "${IMAGE_NAME}:${GITHUB_SHA::7}" \
+            -t "${IMAGE_NAME}:latest" .
+          docker images "${IMAGE_NAME}"
+
+      - name: Verificar la imagen (smoke test del contenedor)
+        run: |
+          docker run -d --name smoke -p 8080:8080 "${IMAGE_NAME}:latest"
+          for i in $(seq 1 15); do
+            if curl -fsS http://localhost:8080/health; then
+              echo "" && echo "Contenedor saludable."
+              exit_code=0 && break
+            fi
+            echo "esperando al contenedor ($i/15)..." && sleep 2
+            exit_code=1
+          done
+          docker logs smoke
+          docker rm -f smoke
+          exit ${exit_code:-1}
+
+      - name: Exportar la imagen como artefacto
+        run: docker save "${IMAGE_NAME}:latest" | gzip > novatech-portal-pedidos.tar.gz
+
+      - name: Publicar la imagen construida
+        uses: actions/upload-artifact@v4
+        with:
+          name: imagen-docker
+          path: novatech-portal-pedidos.tar.gz
+          retention-days: 5
+
+  # ==========================================================================
+  # ETAPA 4 - DEPLOY SIMULADO
+  #
+  #   needs: [test, build]  <-- LA COMPUERTA
+  #   Si "test" falla, este job aparece como "skipped" y NO se despliega nada.
+  #
+  #   En produccion aqui iria ademas:  if: github.ref == 'refs/heads/main'
+  #   Se omite a proposito para que la evidencia de la TA1 muestre el bloqueo
+  #   causado unicamente por las pruebas, en cualquier rama.
+  # ==========================================================================
+  deploy:
+    name: 4. Deploy simulado (bloqueado si fallan las pruebas)
+    runs-on: ubuntu-latest
+    needs: [test, build]
+    environment:
+      name: staging-simulado
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Descargar la imagen construida
+        uses: actions/download-artifact@v4
+        with:
+          name: imagen-docker
+
+      - name: Cargar la imagen en el runner
+        run: |
+          gunzip -c novatech-portal-pedidos.tar.gz | docker load
+          docker images "${IMAGE_NAME}"
+
+      - name: Desplegar con scripts/deploy.sh (entorno simulado)
+        env:
+          HOST_PORT: '8080'
+        run: |
+          chmod +x scripts/deploy.sh
+          ./scripts/deploy.sh
+
+      - name: Verificacion post-despliegue
+        run: |
+          echo "--- /health ---"
+          curl -fsS http://localhost:8080/health
+          echo ""
+          echo "--- version visible en el portal ---"
+          curl -fsS http://localhost:8080/ | grep -o 'id="app-version">v[0-9.]*' || true
+
+      - name: Resumen del despliegue
+        run: |
+          {
+            echo "## Despliegue simulado completado"
+            echo ""
+            echo "| Dato | Valor |"
+            echo "| --- | --- |"
+            echo "| Aplicacion | NovaTech - Portal de Pedidos |"
+            echo "| Version | v$(node -p "require('./package.json').version") |"
+            echo "| Commit | \`${GITHUB_SHA::7}\` |"
+            echo "| Rama | \`${GITHUB_REF_NAME}\` |"
+            echo "| Entorno | staging-simulado |"
+            echo ""
+            echo "El deploy se ejecuto porque **lint, test y build pasaron**."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Limpieza del entorno simulado
+        if: always()
+        run: docker rm -f novatech-portal-pedidos || true

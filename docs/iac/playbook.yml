@@ -1,0 +1,151 @@
+# ============================================================================
+# NovaTech S.A.C. - Configuracion como Codigo (PROPUESTA - TA1)
+# Ansible | Preparar el servidor y desplegar el Portal de Pedidos
+#
+# QUE HACE ESTE PLAYBOOK
+#   Terraform CREA el servidor; Ansible lo CONFIGURA y despliega la app:
+#     1. Instala Docker y sus dependencias
+#     2. Copia el codigo del portal al servidor
+#     3. Construye la imagen y levanta el contenedor (8080 -> 80)
+#     4. Verifica /health: si no responde, el playbook falla
+#
+# POR QUE ANSIBLE
+#   Es idempotente: correrlo diez veces deja el servidor igual que correrlo
+#   una vez. Y no necesita agente instalado, funciona por SSH.
+#
+# COMO SE USARIA
+#   ansible-playbook -i inventory.ini playbook.yml
+#   ansible-playbook -i inventory.ini playbook.yml --check   # simulacion
+#
+# NOTA: PROPUESTA de la PoC. No se ejecuta en la TA1 porque requiere
+#       un servidor real accesible por SSH.
+# ============================================================================
+---
+- name: Desplegar el Portal de Pedidos de NovaTech
+  hosts: portal_pedidos
+  become: true # las tareas necesitan privilegios de root
+
+  vars:
+    app_nombre: novatech-portal-pedidos
+    app_version: "1.0.0"
+    app_ruta: /opt/novatech/portal-pedidos
+    puerto_host: 80 # puerto publico
+    puerto_app: 8080 # puerto interno del contenedor
+    repo_url: https://github.com/USUARIO/novatech-portal-pedidos.git
+
+  tasks:
+    # ---------------------- 1. Instalacion de Docker ----------------------
+    - name: Actualizar la cache de paquetes
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Instalar dependencias necesarias para el repositorio de Docker
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+          - git
+          - python3-docker # requerido por los modulos docker_* de Ansible
+        state: present
+
+    - name: Agregar la clave GPG oficial de Docker
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        keyring: /etc/apt/keyrings/docker.gpg
+        state: present
+
+    - name: Registrar el repositorio oficial de Docker
+      ansible.builtin.apt_repository:
+        repo: >-
+          deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg]
+          https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+        state: present
+        filename: docker
+
+    - name: Instalar el motor de Docker
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+        update_cache: true
+
+    - name: Asegurar que Docker esta activo y arranca con el sistema
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Permitir que el usuario de despliegue use docker sin sudo
+      ansible.builtin.user:
+        name: "{{ ansible_user | default('ubuntu') }}"
+        groups: docker
+        append: true
+
+    # ---------------------- 2. Codigo de la aplicacion --------------------
+    - name: Crear el directorio de la aplicacion
+      ansible.builtin.file:
+        path: "{{ app_ruta }}"
+        state: directory
+        owner: "{{ ansible_user | default('ubuntu') }}"
+        mode: "0755"
+
+    - name: Clonar o actualizar el codigo del portal
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_ruta }}"
+        version: main
+        force: true
+      notify: Reconstruir la imagen del portal
+
+    # ---------------------- 3. Construccion y arranque ---------------------
+    - name: Construir la imagen Docker del portal
+      community.docker.docker_image:
+        name: "{{ app_nombre }}"
+        tag: "{{ app_version }}"
+        source: build
+        force_source: true
+        build:
+          path: "{{ app_ruta }}"
+          pull: true
+
+    - name: Levantar el contenedor del portal (reemplaza al anterior)
+      community.docker.docker_container:
+        name: "{{ app_nombre }}"
+        image: "{{ app_nombre }}:{{ app_version }}"
+        state: started
+        recreate: true # equivale al "detener anterior" de scripts/deploy.sh
+        restart_policy: unless-stopped
+        published_ports:
+          - "{{ puerto_host }}:{{ puerto_app }}"
+        env:
+          NODE_ENV: production
+          PORT: "{{ puerto_app }}"
+
+    # ---------------------- 4. Healthcheck del despliegue ------------------
+    - name: Verificar que el portal responde en /health
+      ansible.builtin.uri:
+        url: "http://localhost:{{ puerto_host }}/health"
+        status_code: 200
+        return_content: true
+      register: salud
+      retries: 15 # el contenedor puede tardar en arrancar
+      delay: 2
+      until: salud.status is defined and salud.status == 200
+
+    - name: Confirmar la version desplegada
+      ansible.builtin.assert:
+        that:
+          - salud.json.status == 'ok'
+          - salud.json.version == app_version
+        success_msg: "Portal de Pedidos v{{ app_version }} desplegado y saludable."
+        fail_msg: "La version desplegada no coincide con la esperada."
+
+  handlers:
+    - name: Reconstruir la imagen del portal
+      ansible.builtin.debug:
+        msg: "El codigo cambio: la imagen se reconstruira en esta ejecucion."

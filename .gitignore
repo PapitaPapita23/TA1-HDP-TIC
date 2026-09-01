@@ -1,0 +1,38 @@
+# Dependencias
+node_modules/
+
+# Artefactos de build
+dist/
+*.tgz
+
+# Cobertura y reportes de pruebas
+coverage/
+junit.xml
+reportes/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Variables de entorno y secretos (nunca deben llegar al repo)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Terraform (estado y credenciales)
+docs/iac/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log

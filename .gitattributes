@@ -1,0 +1,16 @@
+# Normalizacion de fin de linea.
+# Sin esto, en Windows los .sh se guardan con CRLF y al ejecutarlos en Linux
+# fallan con "bad interpreter: /bin/bash^M".
+* text=auto eol=lf
+
+# Scripts y ficheros de infraestructura: SIEMPRE LF
+*.sh        text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.tf        text eol=lf
+Dockerfile  text eol=lf
+
+# Binarios: sin conversion
+*.png binary
+*.jpg binary
+*.gz  binary
