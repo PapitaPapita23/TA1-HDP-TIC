@@ -1,33 +1,42 @@
 EVIDENCIA - GITHUB ACTIONS
 Repositorio: https://github.com/PapitaPapita23/TA1-HDP-TIC
-Consultado: 2026-09-01 11:07:31
+Consultado: 2026-09-01 12:06:37
 
 ==============================================================
- RUN #1  |  rama: main  |  resultado: SUCCESS
- https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33529692471
+ RUN #6  |  rama: main  |  commit: bb26319  |  SUCCESS
+ https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33535398653
 ==============================================================
-  [SUCCESS]  14s  1. Lint (calidad de codigo)
-  [SUCCESS]  18s  2. Pruebas automatizadas
-  [SUCCESS]  29s  3. Build + imagen Docker
-  [SUCCESS]  28s  4. Deploy simulado (bloqueado si fallan las pruebas)
+  [SUCCESS]       15s  1. Lint (calidad de codigo)
+  [SUCCESS]       15s  2. Pruebas automatizadas
+  [SUCCESS]       28s  3. Build + imagen Docker
+  [SUCCESS]       17s  4. Deploy simulado (bloqueado si fallan las pruebas)
 
 ==============================================================
- RUN #2  |  rama: demo/falla-pruebas  |  resultado: FAILURE
- https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33529722294
+ RUN #7  |  rama: demo/falla-pruebas  |  commit: 1d77698  |  FAILURE
+ https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33535414594
 ==============================================================
-  [SUCCESS]  17s  1. Lint (calidad de codigo)
-  [FAILURE]  15s  2. Pruebas automatizadas
-              ^ paso que fallo: Ejecutar suite Jest con cobertura
-  [SKIPPED]   0s  3. Build + imagen Docker
-  [SKIPPED]   0s  4. Deploy simulado (bloqueado si fallan las pruebas)
+  [SUCCESS]       16s  1. Lint (calidad de codigo)
+  [FAILURE]       17s  2. Pruebas automatizadas
+                       ^ paso que fallo: Ejecutar suite Jest con cobertura
+  [SKIPPED] no corrio  3. Build + imagen Docker
+  [SKIPPED] no corrio  4. Deploy simulado (bloqueado si fallan las pruebas)
+
+==============================================================
+ RUN #8  |  rama: demo/falla-pruebas  |  commit: bd3d880  |  SUCCESS
+ https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33535571237
+==============================================================
+  [SUCCESS]       15s  1. Lint (calidad de codigo)
+  [SUCCESS]       18s  2. Pruebas automatizadas
+  [SUCCESS]       40s  3. Build + imagen Docker
+  [SUCCESS]       16s  4. Deploy simulado (bloqueado si fallan las pruebas)
 
 ==============================================================
  LECTURA DE LA EVIDENCIA
 ==============================================================
- Run #2: la etapa 'Pruebas automatizadas' fallo en 15s.
- Los jobs 3 (Build) y 4 (Deploy) figuran como SKIPPED con
- duracion 0s: GitHub Actions NI SIQUIERA los arranco, por el
- needs: [test, build] declarado en el workflow.
+ Run #7: la etapa 'Pruebas automatizadas' fallo en 17s.
+ Los jobs 3 (Build) y 4 (Deploy) figuran como SKIPPED y sin
+ tiempo de ejecucion registrado: GitHub Actions NI SIQUIERA los
+ arranco, por el needs: [test, build] declarado en el workflow.
 
  Conclusion: el codigo defectuoso llego al repositorio, pero
  NO llego a desplegarse. La compuerta de calidad funciono.

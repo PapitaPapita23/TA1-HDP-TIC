@@ -1,8 +1,8 @@
 
 NovaTech - Portal de Pedidos | Pipeline local
-Rama:   demo/falla-pruebas
-Commit: 2a9a8bb
-Fecha:  2026-09-01 11:08:39
+Rama:   main
+Commit: 320e02c
+Fecha:  2026-09-01 12:09:01
 
 ==============================================================
  ETAPA 1/5 - LINT (calidad de codigo)
@@ -32,7 +32,7 @@ PASS tests/formato.test.js
 Test Suites: 3 passed, 3 total
 Tests:       37 passed, 37 total
 Snapshots:   0 total
-Time:        2.063 s
+Time:        0.969 s, estimated 1 s
 Ran all test suites.
 
 OK - etapa '2/5 - TEST (pruebas automatizadas)' superada.
@@ -49,7 +49,7 @@ $ npm run build
 [build] validando modulos...
 [build] modulos OK (NovaTech - Portal de Pedidos v1.0.0)
 [build] artefacto copiado a dist/
-[build] build OK -> v1.0.0 (commit 2a9a8bb)
+[build] build OK -> v1.0.0 (commit 320e02c)
 
 OK - etapa '3/5 - BUILD (artefacto de la aplicacion)' superada.
 

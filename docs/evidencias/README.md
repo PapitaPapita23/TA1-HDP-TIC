@@ -10,9 +10,9 @@
 
 | Run | Rama | Commit | Resultado | Qué demuestra |
 | --- | --- | --- | --- | --- |
-| [#1](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33529692471) | `main` | `a821413` | ✅ SUCCESS | Línea base: los 4 jobs en verde, deploy ejecutado |
-| [#2](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33529722294) | `demo/falla-pruebas` | `2a9a8bb` | ❌ **FAILURE** | **Una prueba falla → build y deploy en `skipped`** |
-| [#3](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33530130026) | `demo/falla-pruebas` | `a2f2bc7` | ✅ SUCCESS | Corregido el error, el pipeline vuelve a verde |
+| [#6](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33535398653) | `main` | `bb26319` | ✅ SUCCESS | Línea base: los 4 jobs en verde, deploy ejecutado |
+| [#7](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33535414594) | `demo/falla-pruebas` | `1d77698` | ❌ **FAILURE** | **Una prueba falla → build y deploy en `skipped`** |
+| [#8](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33535571237) | `demo/falla-pruebas` | `bd3d880` | ✅ SUCCESS | Corregido el error, el pipeline vuelve a verde |
 
 ## Archivos de esta carpeta
 
@@ -21,7 +21,7 @@
 | `00-impacto-del-error.txt` | Montos erróneos que se habrían facturado |
 | `01-pipeline-local-ROJO.txt` | Pipeline local con el bug: test falla, build bloqueado |
 | `02-validacion-workflow.txt` | Verificación de las dependencias `needs:` del workflow |
-| `03-github-actions.txt` | Resultado job por job de los runs #1 y #2 |
+| `03-github-actions.txt` | Resultado job por job de los runs #6, #7 y #8 |
 | `04-pipeline-local-VERDE.txt` | Pipeline local tras la corrección |
 | `05-pipeline-local-DOCKER.txt` | Pipeline completo con `docker build` + `deploy.sh` |
 | `06-contenedor.txt` | Contenedor en ejecución: imagen, puertos, usuario, `/health` |
@@ -30,7 +30,7 @@
 
 ## 1. El error introducido
 
-Rama `demo/falla-pruebas` · commit `2a9a8bb` — *"refactor(pedidos): simplifica el cálculo del total"*
+Rama `demo/falla-pruebas` · commit `1d77698` — *"refactor(pedidos): simplifica el cálculo del total"*
 
 En [`src/pedidos.js`](../../src/pedidos.js) se eliminó el redondeo comercial:
 
@@ -102,34 +102,34 @@ El despliegue quedo BLOQUEADO por el fallo en: 2/5 - TEST
 
 ## 3. Evidencia en GitHub Actions — el bloqueo real
 
-### Run #2 — rama `demo/falla-pruebas`, commit `2a9a8bb` → **FAILURE**
+### Run #7 — rama `demo/falla-pruebas`, commit `1d77698` → **FAILURE**
 
 ```
-  [SUCCESS]  17s  1. Lint (calidad de codigo)
-  [FAILURE]  15s  2. Pruebas automatizadas
-              ^ paso que fallo: Ejecutar suite Jest con cobertura
-  [SKIPPED]   0s  3. Build + imagen Docker
-  [SKIPPED]   0s  4. Deploy simulado (bloqueado si fallan las pruebas)
+  [SUCCESS]       16s  1. Lint (calidad de codigo)
+  [FAILURE]       17s  2. Pruebas automatizadas
+                       ^ paso que fallo: Ejecutar suite Jest con cobertura
+  [SKIPPED] no corrio  3. Build + imagen Docker
+  [SKIPPED] no corrio  4. Deploy simulado (bloqueado si fallan las pruebas)
 ```
 
-El dato decisivo son los **`0s` de duración** en los jobs 3 y 4: GitHub Actions ni siquiera
-los arrancó. No es que el deploy se ejecutara y fallara — **nunca llegó a existir**, por el
-`needs: [test, build]` declarado en el workflow.
+El dato decisivo es que los jobs 3 y 4 **no tienen tiempo de ejecución registrado**: GitHub
+Actions ni siquiera los arrancó. No es que el deploy se ejecutara y fallara — **nunca llegó
+a existir**, por el `needs: [test, build]` declarado en el workflow.
 
-### Run #1 — rama `main`, commit `a821413` → **SUCCESS** (línea base)
+### Run #6 — rama `main`, commit `bb26319` → **SUCCESS** (línea base)
 
 ```
-  [SUCCESS]  14s  1. Lint (calidad de codigo)
-  [SUCCESS]  18s  2. Pruebas automatizadas
-  [SUCCESS]  29s  3. Build + imagen Docker
-  [SUCCESS]  28s  4. Deploy simulado (bloqueado si fallan las pruebas)
+  [SUCCESS]  15s  1. Lint (calidad de codigo)
+  [SUCCESS]  15s  2. Pruebas automatizadas
+  [SUCCESS]  28s  3. Build + imagen Docker
+  [SUCCESS]  17s  4. Deploy simulado (bloqueado si fallan las pruebas)
 ```
 
 ---
 
 ## 4. La corrección
 
-Commit `a2f2bc7` — *"fix(pedidos): restaura el redondeo comercial del total"*
+Commit `bd3d880` — *"fix(pedidos): restaura el redondeo comercial del total"*
 
 ```diff
 - // "El redondeo esta de mas, la multiplicacion ya da el valor exacto." (ERROR)
@@ -139,13 +139,13 @@ Commit `a2f2bc7` — *"fix(pedidos): restaura el redondeo comercial del total"*
 + return redondear2(cantidad * precioUnitario);
 ```
 
-### Run #3 — mismo branch, commit `a2f2bc7` → **SUCCESS**
+### Run #8 — mismo branch, commit `bd3d880` → **SUCCESS**
 
 ```
-  [SUCCESS]  13s  1. Lint (calidad de codigo)
-  [SUCCESS]  17s  2. Pruebas automatizadas
-  [SUCCESS]  34s  3. Build + imagen Docker
-  [SUCCESS]  15s  4. Deploy simulado (bloqueado si fallan las pruebas)
+  [SUCCESS]  15s  1. Lint (calidad de codigo)
+  [SUCCESS]  18s  2. Pruebas automatizadas
+  [SUCCESS]  40s  3. Build + imagen Docker
+  [SUCCESS]  16s  4. Deploy simulado (bloqueado si fallan las pruebas)
 ```
 
 Con el error corregido, los cuatro jobs pasan y el deploy **sí** se ejecuta. La compuerta
@@ -186,7 +186,7 @@ Version visible en el HTML: id="app-version">v1.0.0
 ## Conclusión
 
 El cambio defectuoso existió, fue commiteado y fue empujado al repositorio remoto. Lo que
-**no** ocurrió fue el despliegue: la cadena lo detuvo automáticamente, en 15 segundos y sin
+**no** ocurrió fue el despliegue: la cadena lo detuvo automáticamente, en 17 segundos y sin
 intervención humana.
 
 En el modelo actual de NovaTech —despliegue manual, sin pruebas— ese mismo commit habría

@@ -206,9 +206,9 @@ Evidencia completa en [`docs/evidencias/`](docs/evidencias/).
 
 | Run | Rama | Commit | Resultado | Qué demuestra |
 | --- | --- | --- | --- | --- |
-| [#1](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33529692471) | `main` | `a821413` | ✅ SUCCESS | Línea base: 4 jobs en verde |
-| [#2](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33529722294) | `demo/falla-pruebas` | `2a9a8bb` | ❌ **FAILURE** | **1 prueba falla → `build` y `deploy` en `skipped` (0s)** |
-| [#3](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33530130026) | `demo/falla-pruebas` | `a2f2bc7` | ✅ SUCCESS | Corregido: el deploy se ejecuta |
+| [#6](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33535398653) | `main` | `bb26319` | ✅ SUCCESS | Línea base: 4 jobs en verde |
+| [#7](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33535414594) | `demo/falla-pruebas` | `1d77698` | ❌ **FAILURE** | **1 prueba falla → `build` y `deploy` en `skipped` (0s)** |
+| [#8](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33535571237) | `demo/falla-pruebas` | `bd3d880` | ✅ SUCCESS | Corregido: el deploy se ejecuta |
 
 El error introducido fue eliminar el redondeo comercial del total, con un mensaje de commit
 que sonaba razonable. En coma flotante `3 × 0.1` da `0.30000000000000004`: ese importe

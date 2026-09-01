@@ -1,8 +1,8 @@
 
 NovaTech - Portal de Pedidos | Pipeline local
 Rama:   demo/falla-pruebas
-Commit: 2a9a8bb
-Fecha:  2026-09-01 11:00:04
+Commit: 1d77698
+Fecha:  2026-09-01 12:08:49
 
 ==============================================================
  ETAPA 1/5 - LINT (calidad de codigo)
@@ -25,8 +25,6 @@ $ npm test
 > novatech-portal-pedidos@1.0.0 test
 > jest --runInBand
 
-PASS tests/health.test.js
-PASS tests/formato.test.js
 FAIL tests/total.test.js
   ● calcularTotal() › redondea a 2 decimales evitando errores de punto flotante
 
@@ -45,10 +43,13 @@ FAIL tests/total.test.js
 
       at Object.toBe (tests/total.test.js:27:35)
 
+PASS tests/health.test.js
+PASS tests/formato.test.js
+
 Test Suites: 1 failed, 2 passed, 3 total
 Tests:       1 failed, 36 passed, 37 total
 Snapshots:   0 total
-Time:        1.334 s, estimated 16 s
+Time:        1.048 s, estimated 2 s
 Ran all test suites.
 
 FALLO - etapa '2/5 - TEST (pruebas automatizadas)' no superada.

@@ -1,5 +1,5 @@
 EVIDENCIA - CONTENEDOR EN EJECUCION
-Fecha: 2026-09-01 11:15:55
+Fecha: 2026-09-01 12:10:02
 
 === Imagen construida ===
 REPOSITORY                TAG       SIZE
@@ -7,14 +7,14 @@ novatech-portal-pedidos   latest    207MB
 novatech-portal-pedidos   v1.0.0    207MB
 
 === Contenedor ===
-NAMES                     IMAGE                            STATUS                             PORTS
-novatech-portal-pedidos   novatech-portal-pedidos:v1.0.0   Up 26 seconds (health: starting)   0.0.0.0:80->8080/tcp, [::]:80->8080/tcp
+NAMES                     IMAGE                            STATUS                    PORTS
+novatech-portal-pedidos   novatech-portal-pedidos:v1.0.0   Up 38 seconds (healthy)   0.0.0.0:80->8080/tcp, [::]:80->8080/tcp
 
 === Usuario dentro del contenedor (no debe ser root) ===
 node
 
 === GET /health ===
-{"status":"ok","app":"NovaTech - Portal de Pedidos","version":"1.0.0","uptime":16.413,"timestamp":"2026-09-01T16:15:57.270Z"}
+{"status":"ok","app":"NovaTech - Portal de Pedidos","version":"1.0.0","uptime":38.587,"timestamp":"2026-09-01T17:10:03.384Z"}
 
 === Version visible en el HTML del portal ===
 id="app-version">v1.0.0
