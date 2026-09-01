@@ -1,0 +1,30 @@
+EVIDENCIA - CONTENEDOR EN EJECUCION
+Fecha: 2026-09-01 11:15:55
+
+=== Imagen construida ===
+REPOSITORY                TAG       SIZE
+novatech-portal-pedidos   latest    207MB
+novatech-portal-pedidos   v1.0.0    207MB
+
+=== Contenedor ===
+NAMES                     IMAGE                            STATUS                             PORTS
+novatech-portal-pedidos   novatech-portal-pedidos:v1.0.0   Up 26 seconds (health: starting)   0.0.0.0:80->8080/tcp, [::]:80->8080/tcp
+
+=== Usuario dentro del contenedor (no debe ser root) ===
+node
+
+=== GET /health ===
+{"status":"ok","app":"NovaTech - Portal de Pedidos","version":"1.0.0","uptime":16.413,"timestamp":"2026-09-01T16:15:57.270Z"}
+
+=== Version visible en el HTML del portal ===
+id="app-version">v1.0.0
+<title>NovaTech - Portal de Pedidos v1.0.0</title>
+
+=== Pedidos servidos por el contenedor ===
+  PED-0001 | Comercial Andina S.A.C.            |   3 x   S/ 3,250.00 =   S/ 9,750.00 | Entregado
+  PED-0002 | Distribuidora Los Olivos E.I.R.L.  |   8 x     S/ 899.90 =   S/ 7,199.20 | Enviado
+  PED-0003 | Textiles del Sur S.A.              |   2 x   S/ 1,450.50 =   S/ 2,901.00 | En preparacion
+  PED-0004 | Minera Altiplano S.A.C.            |   1 x  S/ 12,800.75 =  S/ 12,800.75 | Pendiente
+  PED-0005 | Bodegas Union S.R.L.               |  25 x     S/ 129.90 =   S/ 3,247.50 | Cancelado
+
+  Monto en cartera: 32650.95

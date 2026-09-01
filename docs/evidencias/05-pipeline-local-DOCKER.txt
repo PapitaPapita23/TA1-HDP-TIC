@@ -1,0 +1,301 @@
+
+NovaTech - Portal de Pedidos | Pipeline local
+Rama:   main
+Commit: 1f33be0
+Fecha:  2026-09-01 11:11:58
+
+==============================================================
+ ETAPA 1/5 - LINT (calidad de codigo)
+==============================================================
+$ npm run lint
+
+
+> novatech-portal-pedidos@1.0.0 lint
+> eslint . --max-warnings 0
+
+
+OK - etapa '1/5 - LINT (calidad de codigo)' superada.
+
+==============================================================
+ ETAPA 2/5 - TEST (pruebas automatizadas)
+==============================================================
+$ npm test
+
+
+> novatech-portal-pedidos@1.0.0 test
+> jest --runInBand
+
+PASS tests/total.test.js
+PASS tests/health.test.js
+PASS tests/formato.test.js
+
+Test Suites: 3 passed, 3 total
+Tests:       37 passed, 37 total
+Snapshots:   0 total
+Time:        5.933 s
+Ran all test suites.
+
+OK - etapa '2/5 - TEST (pruebas automatizadas)' superada.
+
+==============================================================
+ ETAPA 3/5 - BUILD (artefacto de la aplicacion)
+==============================================================
+$ npm run build
+
+
+> novatech-portal-pedidos@1.0.0 build
+> node scripts/build.js
+
+[build] validando modulos...
+[build] modulos OK (NovaTech - Portal de Pedidos v1.0.0)
+[build] artefacto copiado a dist/
+[build] build OK -> v1.0.0 (commit 1f33be0)
+
+OK - etapa '3/5 - BUILD (artefacto de la aplicacion)' superada.
+
+==============================================================
+ ETAPA 4/5 - DOCKER BUILD (imagen del contenedor)
+==============================================================
+$ docker build -t novatech-portal-pedidos:v1.0.0 -t novatech-portal-pedidos:latest .
+
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.47kB 0.1s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:20-alpine
+#2 ...
+
+#3 [auth] library/node:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:20-alpine
+#2 DONE 3.6s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 179B 0.0s done
+#4 DONE 0.1s
+
+#5 [deps 1/4] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#5 resolve docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#5 resolve docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 0.0s done
+#5 ...
+
+#6 [internal] load build context
+#6 transferring context: 215.65kB 0.1s done
+#6 DONE 0.2s
+
+#5 [deps 1/4] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#5 sha256:fff4e2c1b189bf87d63ad8bd07f7f4eb288d6f2b6a07a8bb44c60e8c075d2096 445B / 445B 0.1s done
+#5 sha256:b2cbbfe903b0821005780971ddc5892edcc4ce74c5a48d82e1d2b382edac3122 1.26MB / 1.26MB 0.3s
+#5 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 0B / 43.23MB 0.2s
+#5 sha256:6a0ac1617861a677b045b7ff88545213ec31c0ff08763195a70a4a5adda577bb 0B / 3.86MB 0.2s
+#5 sha256:b2cbbfe903b0821005780971ddc5892edcc4ce74c5a48d82e1d2b382edac3122 1.26MB / 1.26MB 0.3s done
+#5 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 3.15MB / 43.23MB 0.8s
+#5 sha256:6a0ac1617861a677b045b7ff88545213ec31c0ff08763195a70a4a5adda577bb 1.05MB / 3.86MB 0.6s
+#5 sha256:6a0ac1617861a677b045b7ff88545213ec31c0ff08763195a70a4a5adda577bb 2.10MB / 3.86MB 0.8s
+#5 sha256:6a0ac1617861a677b045b7ff88545213ec31c0ff08763195a70a4a5adda577bb 3.86MB / 3.86MB 1.0s done
+#5 extracting sha256:6a0ac1617861a677b045b7ff88545213ec31c0ff08763195a70a4a5adda577bb
+#5 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 7.34MB / 43.23MB 1.2s
+#5 extracting sha256:6a0ac1617861a677b045b7ff88545213ec31c0ff08763195a70a4a5adda577bb 0.1s done
+#5 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 11.53MB / 43.23MB 1.4s
+#5 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 14.68MB / 43.23MB 1.5s
+#5 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 17.83MB / 43.23MB 1.7s
+#5 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 22.02MB / 43.23MB 1.8s
+#5 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 25.17MB / 43.23MB 2.0s
+#5 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 28.31MB / 43.23MB 2.3s
+#5 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 32.51MB / 43.23MB 2.6s
+#5 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 38.80MB / 43.23MB 2.9s
+#5 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 41.94MB / 43.23MB 3.0s
+#5 sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 43.23MB / 43.23MB 6.6s done
+#5 DONE 7.1s
+
+#5 [deps 1/4] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#5 extracting sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287
+#5 extracting sha256:4feea04c154301db6f4a496efa397b3db96603b1c009c797cfdde77bea8b3287 5.5s done
+#5 DONE 12.6s
+
+#5 [deps 1/4] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#5 extracting sha256:b2cbbfe903b0821005780971ddc5892edcc4ce74c5a48d82e1d2b382edac3122
+#5 extracting sha256:b2cbbfe903b0821005780971ddc5892edcc4ce74c5a48d82e1d2b382edac3122 4.6s done
+#5 DONE 17.2s
+
+#5 [deps 1/4] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#5 extracting sha256:fff4e2c1b189bf87d63ad8bd07f7f4eb288d6f2b6a07a8bb44c60e8c075d2096
+#5 extracting sha256:fff4e2c1b189bf87d63ad8bd07f7f4eb288d6f2b6a07a8bb44c60e8c075d2096 4.1s done
+#5 DONE 21.3s
+
+#7 [deps 2/4] WORKDIR /app
+#7 DONE 19.8s
+
+#8 [deps 3/4] COPY package*.json ./
+#8 DONE 12.9s
+
+#9 [deps 4/4] RUN npm ci --omit=dev && npm cache clean --force
+#9 ...
+
+#10 [runtime 2/6] RUN apk add --no-cache curl
+#10 39.84 (1/9) Installing brotli-libs (1.2.0-r0)
+#10 39.88 (2/9) Installing c-ares (1.34.8-r0)
+#10 39.90 (3/9) Installing libunistring (1.4.1-r0)
+#10 39.96 (4/9) Installing libidn2 (2.3.8-r0)
+#10 39.99 (5/9) Installing nghttp2-libs (1.69.0-r0)
+#10 40.00 (6/9) Installing libpsl (0.21.5-r3)
+#10 40.02 (7/9) Installing zstd-libs (1.5.7-r2)
+#10 40.06 (8/9) Installing libcurl (8.20.0-r0)
+#10 40.09 (9/9) Installing curl (8.20.0-r0)
+#10 40.11 Executing busybox-1.37.0-r30.trigger
+#10 40.12 OK: 15.9 MiB in 27 packages
+#10 DONE 45.0s
+
+#9 [deps 4/4] RUN npm ci --omit=dev && npm cache clean --force
+#9 ...
+
+#11 [runtime 3/6] WORKDIR /app
+#11 DONE 5.7s
+
+#9 [deps 4/4] RUN npm ci --omit=dev && npm cache clean --force
+#9 17.18 
+#9 17.18 added 74 packages, and audited 75 packages in 3s
+#9 17.18 
+#9 17.18 15 packages are looking for funding
+#9 17.18   run `npm fund` for details
+#9 17.18 
+#9 17.18 found 0 vulnerabilities
+#9 17.18 npm notice
+#9 17.18 npm notice New major version of npm available! 10.8.2 -> 12.0.2
+#9 17.18 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+#9 17.18 npm notice To update run: npm install -g npm@12.0.2
+#9 17.18 npm notice
+#9 17.31 npm warn using --force Recommended protections disabled.
+#9 DONE 20.7s
+
+#12 [runtime 4/6] COPY --from=deps /app/node_modules ./node_modules
+#12 DONE 7.5s
+
+#13 [runtime 5/6] COPY package*.json ./
+#13 DONE 7.8s
+
+#14 [runtime 6/6] COPY src ./src
+#14 DONE 6.4s
+
+#15 exporting to image
+#15 exporting layers
+#15 exporting layers 12.4s done
+#15 exporting manifest sha256:fe3dd3ea3ed2a9008e079f0e79904639974233d8122eef74d6126dffefec9dab 0.1s done
+#15 exporting config sha256:c827d38de78ac0e29a0556dfeb1664ec6577d8017067c86f13ba4220547806d8
+#15 exporting config sha256:c827d38de78ac0e29a0556dfeb1664ec6577d8017067c86f13ba4220547806d8 0.0s done
+#15 exporting attestation manifest sha256:0a3f29dee6abaeec211be2fe9f5e3762550266db7ee1d753c0c744153233e943 0.0s done
+#15 exporting manifest list sha256:d24e18a3dfb140f1043100665a3785400577e86b28530cbe3d68ae900c723135
+#15 exporting manifest list sha256:d24e18a3dfb140f1043100665a3785400577e86b28530cbe3d68ae900c723135 0.0s done
+#15 naming to docker.io/library/novatech-portal-pedidos:v1.0.0 done
+#15 unpacking to docker.io/library/novatech-portal-pedidos:v1.0.0
+#15 unpacking to docker.io/library/novatech-portal-pedidos:v1.0.0 0.4s done
+#15 naming to docker.io/library/novatech-portal-pedidos:latest done
+#15 unpacking to docker.io/library/novatech-portal-pedidos:latest 0.1s done
+#15 DONE 13.2s
+
+OK - etapa '4/5 - DOCKER BUILD (imagen del contenedor)' superada.
+
+==============================================================
+ ETAPA 5/5 - DEPLOY + HEALTHCHECK (despliegue simulado)
+==============================================================
+$ env HOST_PORT=80 bash scripts/deploy.sh
+
+[deploy] Aplicacion : novatech-portal-pedidos
+[deploy] Imagen     : novatech-portal-pedidos:v1.0.0
+[deploy] Puertos    : host 80 -> contenedor 8080
+
+[deploy] 1/4 Deteniendo despliegue anterior...
+[  OK  ] No habia un contenedor previo (primer despliegue).
+[deploy] 2/4 Construyendo la imagen...
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.47kB 0.0s done
+#1 DONE 1.9s
+
+#2 [internal] load metadata for docker.io/library/node:20-alpine
+#2 DONE 34.0s
+
+#3 [internal] load .dockerignore
+#3 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context:
+#3 transferring context: 179B 0.1s done
+#3 DONE 2.6s
+
+#4 [internal] load build context
+#4 transferring context: 289B 0.2s done
+#4 DONE 3.7s
+
+#5 [deps 1/4] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#5 resolve docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 5.1s done
+#5 DONE 5.7s
+
+#6 [runtime 2/6] RUN apk add --no-cache curl
+#6 CACHED
+
+#7 [deps 4/4] RUN npm ci --omit=dev && npm cache clean --force
+#7 CACHED
+
+#8 [runtime 3/6] WORKDIR /app
+#8 CACHED
+
+#9 [deps 2/4] WORKDIR /app
+#9 CACHED
+
+#10 [deps 3/4] COPY package*.json ./
+#10 CACHED
+
+#11 [runtime 4/6] COPY --from=deps /app/node_modules ./node_modules
+#11 CACHED
+
+#12 [runtime 5/6] COPY package*.json ./
+#12 CACHED
+
+#13 [runtime 6/6] COPY src ./src
+#13 CACHED
+
+#14 exporting to image
+#14 exporting layers done
+#14 exporting manifest sha256:fe3dd3ea3ed2a9008e079f0e79904639974233d8122eef74d6126dffefec9dab 0.6s done
+#14 exporting config sha256:c827d38de78ac0e29a0556dfeb1664ec6577d8017067c86f13ba4220547806d8
+#14 exporting config sha256:c827d38de78ac0e29a0556dfeb1664ec6577d8017067c86f13ba4220547806d8 0.9s done
+#14 exporting attestation manifest sha256:b2f16eec3c619ddc00eab6c34dacedc4022c12c800e0bd2bf9ec622c913a92b5
+#14 exporting attestation manifest sha256:b2f16eec3c619ddc00eab6c34dacedc4022c12c800e0bd2bf9ec622c913a92b5 7.4s done
+#14 exporting manifest list sha256:060481da8c3703a6f5ef518d7390387bae3251e4b4bdb111bc594df675701e64
+#14 exporting manifest list sha256:060481da8c3703a6f5ef518d7390387bae3251e4b4bdb111bc594df675701e64 1.2s done
+#14 naming to docker.io/library/novatech-portal-pedidos:v1.0.0
+#14 naming to docker.io/library/novatech-portal-pedidos:v1.0.0 0.0s done
+#14 unpacking to docker.io/library/novatech-portal-pedidos:v1.0.0 0.0s done
+#14 naming to docker.io/library/novatech-portal-pedidos:latest done
+#14 unpacking to docker.io/library/novatech-portal-pedidos:latest 0.0s done
+#14 DONE 14.3s
+[  OK  ] Imagen construida: novatech-portal-pedidos:v1.0.0
+[deploy] 3/4 Levantando el contenedor...
+[  OK  ] Contenedor 'novatech-portal-pedidos' en ejecucion.
+[deploy] 4/4 Healthcheck contra http://localhost:80/health ...
+   ... esperando a la aplicacion (1/15)
+
+[  OK  ] La aplicacion responde (intento 2/15).
+       Respuesta: {"status":"ok","app":"NovaTech - Portal de Pedidos","version":"1.0.0","uptime":2.103,"timestamp":"2026-09-01T16:15:42.959Z"}
+
+[  OK  ] DESPLIEGUE EXITOSO -> http://localhost:80
+
+OK - etapa '5/5 - DEPLOY + HEALTHCHECK (despliegue simulado)' superada.
+
+==============================================================
+ RESUMEN DEL PIPELINE
+==============================================================
+  [   OK    ] 1/5 - LINT (calidad de codigo)
+  [   OK    ] 2/5 - TEST (pruebas automatizadas)
+  [   OK    ] 3/5 - BUILD (artefacto de la aplicacion)
+  [   OK    ] 4/5 - DOCKER BUILD (imagen del contenedor)
+  [   OK    ] 5/5 - DEPLOY + HEALTHCHECK (despliegue simulado)
+
+PIPELINE EN VERDE.
+Todas las etapas pasaron: el despliegue esta autorizado.
+

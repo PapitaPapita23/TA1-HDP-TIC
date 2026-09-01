@@ -1,0 +1,77 @@
+
+NovaTech - Portal de Pedidos | Pipeline local
+Rama:   demo/falla-pruebas
+Commit: 2a9a8bb
+Fecha:  2026-09-01 11:08:39
+
+==============================================================
+ ETAPA 1/5 - LINT (calidad de codigo)
+==============================================================
+$ npm run lint
+
+
+> novatech-portal-pedidos@1.0.0 lint
+> eslint . --max-warnings 0
+
+
+OK - etapa '1/5 - LINT (calidad de codigo)' superada.
+
+==============================================================
+ ETAPA 2/5 - TEST (pruebas automatizadas)
+==============================================================
+$ npm test
+
+
+> novatech-portal-pedidos@1.0.0 test
+> jest --runInBand
+
+PASS tests/total.test.js
+PASS tests/health.test.js
+PASS tests/formato.test.js
+
+Test Suites: 3 passed, 3 total
+Tests:       37 passed, 37 total
+Snapshots:   0 total
+Time:        2.063 s
+Ran all test suites.
+
+OK - etapa '2/5 - TEST (pruebas automatizadas)' superada.
+
+==============================================================
+ ETAPA 3/5 - BUILD (artefacto de la aplicacion)
+==============================================================
+$ npm run build
+
+
+> novatech-portal-pedidos@1.0.0 build
+> node scripts/build.js
+
+[build] validando modulos...
+[build] modulos OK (NovaTech - Portal de Pedidos v1.0.0)
+[build] artefacto copiado a dist/
+[build] build OK -> v1.0.0 (commit 2a9a8bb)
+
+OK - etapa '3/5 - BUILD (artefacto de la aplicacion)' superada.
+
+==============================================================
+ ETAPA 4/5 - DOCKER BUILD
+==============================================================
+OMITIDA - SKIP_DOCKER=1
+
+==============================================================
+ ETAPA 5/5 - DEPLOY + HEALTHCHECK
+==============================================================
+OMITIDA - SKIP_DOCKER=1
+
+==============================================================
+ RESUMEN DEL PIPELINE
+==============================================================
+  [   OK    ] 1/5 - LINT (calidad de codigo)
+  [   OK    ] 2/5 - TEST (pruebas automatizadas)
+  [   OK    ] 3/5 - BUILD (artefacto de la aplicacion)
+  [ OMITIDA ] 4/5 - DOCKER BUILD
+  [ OMITIDA ] 5/5 - DEPLOY + HEALTHCHECK
+
+PIPELINE EN VERDE.
+Todas las etapas pasaron: el despliegue esta autorizado.
+

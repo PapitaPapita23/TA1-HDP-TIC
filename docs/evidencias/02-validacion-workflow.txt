@@ -1,0 +1,29 @@
+VALIDACION DEL PIPELINE (.github/workflows/ci.yml)
+=======================================================
+Workflow: CI/CD - Portal de Pedidos
+
+  job lint
+      1. Lint (calidad de codigo)
+      (sin dependencias: arranca de inmediato)
+      pasos: 4
+
+  job test
+      2. Pruebas automatizadas
+      (sin dependencias: arranca de inmediato)
+      pasos: 5
+
+  job build
+      3. Build + imagen Docker
+      needs: lint, test
+      pasos: 9
+
+  job deploy
+      4. Deploy simulado (bloqueado si fallan las pruebas)
+      needs: test, build
+      pasos: 7
+
+=======================================================
+COMPUERTA DE CALIDAD
+  El job deploy declara needs: ['test', 'build']
+  => si test falla, GitHub Actions marca deploy como skipped
+     y NINGUNA version se despliega.

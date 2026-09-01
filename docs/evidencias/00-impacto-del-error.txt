@@ -1,0 +1,13 @@
+IMPACTO DEL ERROR EN LOS MONTOS FACTURADOS
+Version con el bug (sin redondeo comercial)
+
+Caso                 | Total calculado        | Total correcto
+---------------------+------------------------+---------------
+3 x 0.1              | 0.30000000000000004    | 0.3 MAL
+7 x 10.005           | 70.03500000000001      | 70.04 MAL
+3 x 33.333           | 99.999                 | 99.99 MAL
+6 x 16.665           | 99.99                  | 99.99 OK 
+11 x 1.115           | 12.265                 | 12.27 MAL
+
+Los importes con mas de 2 decimales llegarian asi a la factura del
+cliente y al asiento contable. Ninguna revision visual lo detecta.

@@ -71,6 +71,7 @@ novatech-portal-pedidos/
 │   └── health.test.js          # Endpoints, incluido /health
 ├── scripts/
 │   ├── deploy.sh               # Despliegue con contenedores + healthcheck
+│   ├── pipeline-local.sh       # Simulador local del pipeline (misma compuerta)
 │   └── build.js                # Etapa de build: valida y sella el artefacto
 ├── .github/workflows/
 │   └── ci.yml                  # Pipeline CI/CD (la compuerta de calidad)
@@ -79,6 +80,7 @@ novatech-portal-pedidos/
 │   └── evidencias/             # Evidencias del escenario de falla
 ├── Dockerfile                  # Imagen liviana multi-stage (node:20-alpine)
 ├── .dockerignore
+├── .gitattributes              # Fuerza LF en scripts (evita CRLF al correr en Linux)
 ├── .gitignore
 ├── package.json
 └── README.md
@@ -123,7 +125,7 @@ npm test
 
 ## Docker
 
-Imagen **multi-stage** sobre `node:20-alpine` (~130 MB) que corre **sin privilegios de root**:
+Imagen **multi-stage** sobre `node:20-alpine` (207 MB medidos) que corre **sin privilegios de root**:
 
 ```bash
 docker build -t novatech-portal-pedidos:v1.0.0 .
@@ -199,9 +201,29 @@ de diseño están en [`docs/iac/README.md`](docs/iac/README.md).
 
 ## Escenario de falla controlada
 
-La evidencia de que la compuerta funciona está en
-[`docs/evidencias/`](docs/evidencias/): se rompe una prueba a propósito, se comprueba que
-el pipeline bloquea el despliegue, y luego se corrige para verlo en verde.
+Se rompió una prueba a propósito para comprobar que la compuerta funciona de verdad.
+Evidencia completa en [`docs/evidencias/`](docs/evidencias/).
+
+| Run | Rama | Commit | Resultado | Qué demuestra |
+| --- | --- | --- | --- | --- |
+| [#1](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33529692471) | `main` | `a821413` | ✅ SUCCESS | Línea base: 4 jobs en verde |
+| [#2](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33529722294) | `demo/falla-pruebas` | `2a9a8bb` | ❌ **FAILURE** | **1 prueba falla → `build` y `deploy` en `skipped` (0s)** |
+| [#3](https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33530130026) | `demo/falla-pruebas` | `a2f2bc7` | ✅ SUCCESS | Corregido: el deploy se ejecuta |
+
+El error introducido fue eliminar el redondeo comercial del total, con un mensaje de commit
+que sonaba razonable. En coma flotante `3 × 0.1` da `0.30000000000000004`: ese importe
+habría llegado a la factura del cliente. **1 de 37 pruebas lo detectó y bastó para frenar
+la entrega.**
+
+Para reproducirlo en local, sin GitHub:
+
+```bash
+bash scripts/pipeline-local.sh                 # pipeline completo, con Docker
+SKIP_DOCKER=1 bash scripts/pipeline-local.sh   # solo lint / test / build
+```
+
+El script respeta las mismas dependencias que el workflow: si `test` falla, las etapas
+siguientes se marcan como `BLOQUEADA` y no se ejecutan.
 
 ---
 

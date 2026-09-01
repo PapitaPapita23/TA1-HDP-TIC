@@ -1,0 +1,33 @@
+EVIDENCIA - GITHUB ACTIONS
+Repositorio: https://github.com/PapitaPapita23/TA1-HDP-TIC
+Consultado: 2026-09-01 11:07:31
+
+==============================================================
+ RUN #1  |  rama: main  |  resultado: SUCCESS
+ https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33529692471
+==============================================================
+  [SUCCESS]  14s  1. Lint (calidad de codigo)
+  [SUCCESS]  18s  2. Pruebas automatizadas
+  [SUCCESS]  29s  3. Build + imagen Docker
+  [SUCCESS]  28s  4. Deploy simulado (bloqueado si fallan las pruebas)
+
+==============================================================
+ RUN #2  |  rama: demo/falla-pruebas  |  resultado: FAILURE
+ https://github.com/PapitaPapita23/TA1-HDP-TIC/actions/runs/33529722294
+==============================================================
+  [SUCCESS]  17s  1. Lint (calidad de codigo)
+  [FAILURE]  15s  2. Pruebas automatizadas
+              ^ paso que fallo: Ejecutar suite Jest con cobertura
+  [SKIPPED]   0s  3. Build + imagen Docker
+  [SKIPPED]   0s  4. Deploy simulado (bloqueado si fallan las pruebas)
+
+==============================================================
+ LECTURA DE LA EVIDENCIA
+==============================================================
+ Run #2: la etapa 'Pruebas automatizadas' fallo en 15s.
+ Los jobs 3 (Build) y 4 (Deploy) figuran como SKIPPED con
+ duracion 0s: GitHub Actions NI SIQUIERA los arranco, por el
+ needs: [test, build] declarado en el workflow.
+
+ Conclusion: el codigo defectuoso llego al repositorio, pero
+ NO llego a desplegarse. La compuerta de calidad funciono.
