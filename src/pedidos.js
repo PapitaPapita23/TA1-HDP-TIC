@@ -42,6 +42,8 @@ function calcularTotal(cantidad, precioUnitario) {
   if (typeof precioUnitario !== 'number' || !Number.isFinite(precioUnitario) || precioUnitario < 0) {
     throw new TypeError('El precio unitario debe ser un numero finito no negativo');
   }
+  // El redondeo NO es opcional: en coma flotante 3 * 0.1 da 0.30000000000000004
+  // y ese importe llegaria tal cual a la factura del cliente.
   return redondear2(cantidad * precioUnitario);
 }
 
