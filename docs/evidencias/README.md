@@ -25,6 +25,7 @@
 | `04-pipeline-local-VERDE.txt` | Pipeline local tras la corrección |
 | `05-pipeline-local-DOCKER.txt` | Pipeline completo con `docker build` + `deploy.sh` |
 | `06-contenedor.txt` | Contenedor en ejecución: imagen, puertos, usuario, `/health` |
+| `07-deploy-sh.txt` | Salida completa de `scripts/deploy.sh`, con el healthcheck final |
 
 ---
 
